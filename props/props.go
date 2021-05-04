@@ -124,3 +124,12 @@ func ParseProperties(text string) (Pairs, error) {
 	}
 	return result, nil
 }
+
+// FromMap take a map and returns a Pairs based on its contents
+func FromMap(in map[string]string) Pairs {
+	var pairs Pairs
+	for k, v := range in {
+		pairs = append(pairs, Pair{K: k, V: v})
+	}
+	return pairs
+}
