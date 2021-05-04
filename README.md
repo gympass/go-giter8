@@ -11,7 +11,7 @@ module github.com/yourusername/yourproject
 
 go 1.16
 
-require github.com/Gympass/go-giter8 v0.1.0
+require github.com/Gympass/go-giter8 v0.1.1
 ```
 
 2. Use `props` to parse `default.properties`:
