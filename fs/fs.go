@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/heyvito/go-giter8/lexer"
-	"github.com/heyvito/go-giter8/sb"
+	"github.com/Gympass/go-giter8/lexer"
+	"github.com/Gympass/go-giter8/sb"
 )
 
 type Node struct {

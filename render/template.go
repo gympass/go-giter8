@@ -7,9 +7,9 @@ import (
 	"path/filepath"
 	"unicode/utf8"
 
-	"github.com/heyvito/go-giter8/fs"
-	"github.com/heyvito/go-giter8/lexer"
-	"github.com/heyvito/go-giter8/props"
+	"github.com/Gympass/go-giter8/fs"
+	"github.com/Gympass/go-giter8/lexer"
+	"github.com/Gympass/go-giter8/props"
 )
 
 func isText(s []byte) bool {

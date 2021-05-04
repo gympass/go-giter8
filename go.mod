@@ -1,4 +1,4 @@
-module github.com/heyvito/go-giter8
+module github.com/Gympass/go-giter8
 
 go 1.16
 

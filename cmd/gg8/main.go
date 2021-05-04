@@ -11,9 +11,9 @@ import (
 
 	"github.com/manifoldco/promptui"
 
-	"github.com/heyvito/go-giter8/lexer"
-	"github.com/heyvito/go-giter8/props"
-	"github.com/heyvito/go-giter8/render"
+	"github.com/Gympass/go-giter8/lexer"
+	"github.com/Gympass/go-giter8/props"
+	"github.com/Gympass/go-giter8/render"
 )
 
 func findGit() (bool, string) {

@@ -4,7 +4,7 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/heyvito/go-giter8/sb"
+	"github.com/Gympass/go-giter8/sb"
 )
 
 type Literal string

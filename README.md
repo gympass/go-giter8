@@ -1,5 +1,5 @@
 # go-giter8
-[![Go](https://github.com/heyvito/go-giter8/actions/workflows/go.yml/badge.svg)](https://github.com/heyvito/go-giter8/actions/workflows/go.yml)
+[![Go](https://github.com/Gympass/go-giter8/actions/workflows/go.yml/badge.svg)](https://github.com/Gympass/go-giter8/actions/workflows/go.yml)
 
 `go-giter8` implements a simple library capable of handling [giter8](https://github.com/foundweekends/giter8) templates.
 
@@ -11,7 +11,7 @@ module github.com/yourusername/yourproject
 
 go 1.16
 
-require github.com/heyvito/go-giter8 v0.1.0
+require github.com/Gympass/go-giter8 v0.1.0
 ```
 
 2. Use `props` to parse `default.properties`:
@@ -23,7 +23,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/heyvito/go-giter8/props"
+	"github.com/Gympass/go-giter8/props"
 )
 
 func parseProperties() props.Pairs {
@@ -46,9 +46,9 @@ import (
 	"io"
 	"os"
 
-	"github.com/heyvito/go-giter8/lexer"
-	"github.com/heyvito/go-giter8/props"
-	"github.com/heyvito/go-giter8/render"
+	"github.com/Gympass/go-giter8/lexer"
+	"github.com/Gympass/go-giter8/props"
+	"github.com/Gympass/go-giter8/render"
 )
 
 func parseProperties() props.Pairs { /* ... */ }
@@ -69,8 +69,8 @@ func executeTemplate(path string) (string, error) {
 Alternatively, you can use the `gg8` CLI to download and execute a template:
 
 ```bash
-$ gg8 heyvito/test.g8 test
-Clonning https://github.com/heyvito/test.g8.git...
+$ gg8 Gympass/test.g8 test
+Clonning https://github.com/Gympass/test.g8.git...
 Executing template:
 
 name [Test project]: <return>
@@ -83,8 +83,8 @@ $
 One can also provide all options through command-line parameters:
 
 ```bash
-$ gg8 heyvito/test.g8 test -- name="A name" otherValue="othervalue"
-Clonning https://github.com/heyvito/test.g8.git...
+$ gg8 Gympass/test.g8 test -- name="A name" otherValue="othervalue"
+Clonning https://github.com/Gympass/test.g8.git...
 Executing template:
 name: A name 
 otherValue: othervalue
