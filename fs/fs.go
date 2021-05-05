@@ -44,7 +44,7 @@ func prepareNodeName(rawName string) lexer.AST {
 		case stateLiteral:
 			if chr == '$' && lastRune != '\\' {
 				if tmp.Len() > 0 {
-					ast = append(ast, lexer.Literal(tmp.String()))
+					ast = append(ast, lexer.Literal{String: tmp.String()})
 					tmp.Reset()
 				}
 
@@ -88,12 +88,12 @@ func prepareNodeName(rawName string) lexer.AST {
 	}
 	if s == stateLiteral {
 		if tmp.Len() > 0 {
-			ast = append(ast, lexer.Literal(tmp.String()))
+			ast = append(ast, lexer.Literal{String: tmp.String()})
 		}
 	} else {
-		ast = append(ast, lexer.Literal(fmt.Sprintf("$%s", tmp.String())))
+		ast = append(ast, lexer.Literal{String: fmt.Sprintf("$%s", tmp.String())})
 		if format.Len() > 0 {
-			ast = append(ast, lexer.Literal(fmt.Sprintf("__%s", format.String())))
+			ast = append(ast, lexer.Literal{String: fmt.Sprintf("__%s", format.String())})
 		}
 	}
 	return ast

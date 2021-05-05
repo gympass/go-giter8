@@ -43,3 +43,27 @@ func TestEscapes01(t *testing.T) {
 	_, err := Tokenize(template)
 	require.NoError(t, err)
 }
+
+func TestConditional(t *testing.T) {
+	template := "$if(foobar.truthy)$foo$endif$"
+	_, err := Tokenize(template)
+	require.NoError(t, err)
+}
+
+func TestConditionalElse(t *testing.T) {
+	template := "$if(foobar.truthy)$foo$else$bar$endif$"
+	_, err := Tokenize(template)
+	require.NoError(t, err)
+}
+
+func TestConditionalElseIf(t *testing.T) {
+	template := `$if(foobar.truthy)$
+foo
+$elseif(foobar.truthy)$
+bar
+$else$
+baz
+$endif$`
+	_, err := Tokenize(template)
+	require.NoError(t, err)
+}
