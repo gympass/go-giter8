@@ -82,6 +82,7 @@ type state int
 const (
 	stateLiteral state = iota
 	stateTemplateName
+	stateTemplateCombinedFormatter
 	stateTemplateConditionalExpression
 	stateTemplateConditionalExpressionEnd
 	stateTemplateConditionalThen
@@ -99,6 +100,8 @@ func (s state) String() string {
 		return "stateLiteral"
 	case stateTemplateName:
 		return "stateTemplateName"
+	case stateTemplateCombinedFormatter:
+		return "stateTemplateCombinedFormatter"
 	case stateTemplateConditionalExpression:
 		return "stateTemplateConditionalExpression"
 	case stateTemplateConditionalExpressionEnd:
@@ -123,19 +126,20 @@ func (s state) String() string {
 }
 
 const (
-	ESCAPE    = rune('\\')
-	DELIM     = rune('$')
-	NEWLINE   = rune('\n')
-	SEMICOLON = rune(';')
-	EQUALS    = rune('=')
-	QUOT      = rune('"')
-	COMMA     = rune(',')
-	SPACE     = rune(' ')
-	HTAB      = rune('\t')
-	LPAREN    = rune('(')
-	RPAREN    = rune(')')
-	DOT       = rune('.')
-	TRUTHY    = "truthy"
+	ESCAPE     = rune('\\')
+	DELIM      = rune('$')
+	NEWLINE    = rune('\n')
+	SEMICOLON  = rune(';')
+	EQUALS     = rune('=')
+	QUOT       = rune('"')
+	COMMA      = rune(',')
+	SPACE      = rune(' ')
+	HTAB       = rune('\t')
+	LPAREN     = rune('(')
+	RPAREN     = rune(')')
+	DOT        = rune('.')
+	UNDERSCORE = rune('_')
+	TRUTHY     = "truthy"
 )
 
 func isSpace(r rune) bool {
@@ -430,10 +434,30 @@ func (t *Tokenizer) Feed(chr rune) error {
 		if t.templateName.Len() == 0 && !unicode.IsLetter(chr) {
 			return t.unexpectedToken(chr)
 		}
-		if !unicode.IsLetter(chr) && !unicode.IsDigit(chr) {
+		if chr == UNDERSCORE && t.lastRune() == UNDERSCORE {
+			t.templateName.DeleteLast()
+			t.transition(stateTemplateCombinedFormatter)
+			t.tmp.Reset()
+			return nil
+		}
+		if !unicode.IsLetter(chr) && !unicode.IsDigit(chr) && chr != UNDERSCORE {
 			return t.unexpectedToken(chr)
 		}
 		t.templateName.WriteRune(chr)
+	case stateTemplateCombinedFormatter:
+		if chr == DELIM {
+			if t.tmp.Len() == 0 {
+				return t.unexpectedToken(chr)
+			}
+			t.templateOptions = map[string]string{
+				"format": t.tmp.String(),
+			}
+			t.commitTemplate()
+			t.tmp.Reset()
+			t.transition(stateLiteral)
+			return nil
+		}
+		t.tmp.WriteRune(chr)
 
 	case stateTemplateConditionalExpression:
 		if chr == RPAREN {

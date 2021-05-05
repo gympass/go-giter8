@@ -1,13 +1,11 @@
 package fs
 
 import (
-	"fmt"
 	"io/fs"
 	"path/filepath"
 	"strings"
 
 	"github.com/Gympass/go-giter8/lexer"
-	"github.com/Gympass/go-giter8/sb"
 )
 
 type Node struct {
@@ -20,81 +18,10 @@ type TreeItem struct {
 	Nodes  []Node
 }
 
-type state int
-
-const (
-	stateLiteral state = iota + 1
-	stateName
-	stateFormat
-)
-
 func prepareNodeName(rawName string) lexer.AST {
-	ast := lexer.AST{}
-	s := stateLiteral
-	tmp := sb.New()
-	format := sb.New()
-	chars := []rune(rawName)
-	for i, chr := range chars {
-		var lastRune = ' '
-		if i > 0 {
-			lastRune = chars[i-1]
-		}
-
-		switch s {
-		case stateLiteral:
-			if chr == '$' && lastRune != '\\' {
-				if tmp.Len() > 0 {
-					ast = append(ast, lexer.Literal{String: tmp.String()})
-					tmp.Reset()
-				}
-
-				s = stateName
-				continue
-			}
-			tmp.WriteRune(chr)
-		case stateName:
-			if chr == '$' {
-				if tmp.Len() == 0 {
-					tmp.WriteRune(chr)
-				} else {
-					ast = append(ast, lexer.Template{
-						Name:    tmp.String(),
-						Options: nil,
-					})
-					tmp.Reset()
-				}
-				s = stateLiteral
-				continue
-			}
-			if chr == '_' && lastRune == '_' {
-				tmp.DeleteLast()
-				s = stateFormat
-				continue
-			}
-			tmp.WriteRune(chr)
-
-		case stateFormat:
-			if chr == '$' {
-				ast = append(ast, lexer.Template{
-					Name:    tmp.String(),
-					Options: map[string]string{"format": format.String()},
-				})
-				tmp.Reset()
-				format.Reset()
-				s = stateLiteral
-			}
-			format.WriteRune(chr)
-		}
-	}
-	if s == stateLiteral {
-		if tmp.Len() > 0 {
-			ast = append(ast, lexer.Literal{String: tmp.String()})
-		}
-	} else {
-		ast = append(ast, lexer.Literal{String: fmt.Sprintf("$%s", tmp.String())})
-		if format.Len() > 0 {
-			ast = append(ast, lexer.Literal{String: fmt.Sprintf("__%s", format.String())})
-		}
+	ast, err := lexer.Tokenize(rawName)
+	if err != nil {
+		return lexer.AST{lexer.Literal{String: rawName}}
 	}
 	return ast
 }

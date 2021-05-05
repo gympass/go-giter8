@@ -1,6 +1,7 @@
 package lexer
 
 import (
+	"github.com/stretchr/testify/assert"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -78,4 +79,19 @@ baz
 $endif$`
 	_, err := Tokenize(template)
 	require.Error(t, err)
+}
+
+func TestCompositeFormatting(t *testing.T) {
+	template := `$name__decap$`
+	ast, err := Tokenize(template)
+	require.NoError(t, err)
+	require.Equal(t, 1, len(ast))
+	node := ast[0]
+	assert.Equal(t, KindTemplate, node.Kind())
+	tmp := node.(*Template)
+	assert.Equal(t, "name", tmp.Name)
+	assert.Equal(t, 1, len(tmp.Options))
+	fmt, ok := tmp.Options["format"]
+	assert.True(t, ok)
+	assert.Equal(t, "decap", fmt)
 }

@@ -100,6 +100,11 @@ func renderAndJoin(exec *Executor, nodes []fs.Node) (string, error) {
 		if r, err := exec.Exec(n.Name); err != nil {
 			return "", err
 		} else {
+			if r == "" {
+				// If a single item yields an empty string, we can safely
+				// invalidate all the path and do not work on this fs node
+				return "", nil
+			}
 			items = append(items, r)
 		}
 	}
@@ -133,7 +138,9 @@ func TemplateDirectory(props props.Pairs, source, destination string) error {
 		if err != nil {
 			return err
 		}
-
+		if path == "" {
+			continue
+		}
 		path = filepath.Join(destination, path)
 
 		if item.IsDir {
