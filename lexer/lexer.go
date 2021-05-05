@@ -187,10 +187,13 @@ func NewTokenizer() *Tokenizer {
 
 func (t *Tokenizer) pushStack() {
 	t.stateStack = append(t.stateStack, t._state)
+	if DEBUG {
+		debug("STS: PUSH [%s]", t.stateStack.String())
+	}
 }
 
 func (t *Tokenizer) transition(s state) {
-	debug("Transitioning from %s to %s\n", t._state, s)
+	debug("STT: Transitioning %s -> %s", t._state, s)
 	t._state = s
 }
 
@@ -200,6 +203,9 @@ func (t *Tokenizer) popStack() state {
 	}
 	t.transition(t.stateStack[len(t.stateStack)-1])
 	t.stateStack = t.stateStack[0 : len(t.stateStack)-1]
+	if DEBUG {
+		debug("STS: POP [%s]", t.stateStack.String())
+	}
 	return t._state
 }
 
@@ -208,6 +214,9 @@ func (t *Tokenizer) replaceStack(s state) {
 		panic("BUG? Attempt to replace on empty state stack")
 	}
 	t.stateStack[len(t.stateStack)-1] = s
+	if DEBUG {
+		debug("STS: REPLACE [%s]", t.stateStack.String())
+	}
 }
 
 func (t *Tokenizer) currentStack() (bool, state) {
@@ -265,7 +274,7 @@ func (t *Tokenizer) commitTemplateOption() {
 
 func (t *Tokenizer) prepareConditional() error {
 	ok, ls := t.currentStack()
-	debug("prepareConditional: Current state: %s, lastStack(%v): %s\n", t._state, ok, ls)
+	debug("CND: Current state: %s, lastStack(%v): %s", t._state, ok, ls)
 	expr := t.templateName.String()
 	separatorIndex := strings.IndexRune(expr, DOT)
 	if separatorIndex == -1 {
@@ -335,7 +344,7 @@ func (t *Tokenizer) Feed(chr rune) error {
 		if pchr == "\n" {
 			pchr = "\\n"
 		}
-		debug("CHR: %s, STATE: %s\n", pchr, t._state)
+		debug("CHR: %s, STATE: %s", pchr, t._state)
 	}
 	switch t._state {
 	case stateLiteral:
