@@ -162,12 +162,12 @@ type Executor struct {
 	props props.Pairs
 }
 
-func (e *Executor) runMethods(t lexer.Template) (string, error) {
+func (e *Executor) runMethods(t *lexer.Template) (string, error) {
 	val, ok := e.props.Fetch(t.Name)
 	if !ok {
 		return "", fmt.Errorf("property `%s' is not defined", t.Name)
 	}
-	opts := extractFormatOptions(&t)
+	opts := extractFormatOptions(t)
 	for _, n := range opts {
 		if fn, ok := helpers[n]; ok {
 			val = fn(val)
@@ -178,21 +178,62 @@ func (e *Executor) runMethods(t lexer.Template) (string, error) {
 	return val, nil
 }
 
+func (e *Executor) evaluateConditionalExpression(expr, helper string) (bool, error) {
+	v, ok := e.props.FetchPair(expr)
+	if !ok {
+		return false, fmt.Errorf("property `%s' is not defined", expr)
+	}
+	if strings.EqualFold(helper, "truthy") {
+		return v.Truthy(), nil
+	}
+	panic("BUG: helper allowed by lexer, but not implemented by renderer")
+}
+
+func (e *Executor) evaluateConditional(c *lexer.Conditional, r *strings.Builder) error {
+	ok, err := e.evaluateConditionalExpression(c.Property, c.Helper)
+	if err != nil {
+		return err
+	} else if ok {
+		return e.execTree(c.Then, r)
+	}
+
+	for _, c := range c.ElseIf {
+		return e.evaluateConditional(c, r)
+	}
+
+	if c.Else != nil {
+		return e.execTree(c.Else, r)
+	}
+
+	return nil
+}
+
+func (e *Executor) execTree(tree lexer.AST, r *strings.Builder) error {
+	for _, elem := range tree {
+		switch v := elem.(type) {
+		case *lexer.Literal:
+			r.WriteString(v.String)
+		case *lexer.Template:
+			val, err := e.runMethods(v)
+			if err != nil {
+				return err
+			}
+			r.WriteString(val)
+		case *lexer.Conditional:
+			if err := e.evaluateConditional(v, r); err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
 // Exec takes a given AST and renders using props passed to the current
 // Executor. Either returns a rendered string, or an error.
 func (e *Executor) Exec(tree lexer.AST) (string, error) {
 	var result strings.Builder
-	for _, elem := range tree {
-		switch v := elem.(type) {
-		case lexer.Literal:
-			result.WriteString(string(v))
-		case lexer.Template:
-			val, err := e.runMethods(v)
-			if err != nil {
-				return "", err
-			}
-			result.WriteString(val)
-		}
+	if err := e.execTree(tree, &result); err != nil {
+		return "", err
 	}
 	return result.String(), nil
 }

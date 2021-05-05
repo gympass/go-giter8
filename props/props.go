@@ -15,6 +15,18 @@ const (
 )
 
 type Pair struct{ K, V string }
+
+var truthyValues = []string{"yes", "y", "true"}
+
+func (p Pair) Truthy() bool {
+	for _, v := range truthyValues {
+		if strings.EqualFold(p.V, v) {
+			return true
+		}
+	}
+	return false
+}
+
 type Pairs []Pair
 
 // Find returns a Pair with with name, or nil
@@ -35,6 +47,15 @@ func (p *Pairs) Fetch(name string) (string, bool) {
 	} else {
 		return "", false
 	}
+}
+
+// FetchPair attempts to find a pair with a given name, and returns the pair
+// representation and true. Returns nil and false otherwise.
+func (p *Pairs) FetchPair(name string) (*Pair, bool) {
+	if pair := p.Find(name); pair != nil {
+		return pair, true
+	}
+	return nil, false
 }
 
 // Map transforms a given Pairs slice into a map
