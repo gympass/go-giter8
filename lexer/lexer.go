@@ -142,6 +142,16 @@ func isSpace(r rune) bool {
 	return r == SPACE || r == HTAB
 }
 
+type stateStack []state
+
+func (s *stateStack) String() string {
+	result := make([]string, 0, len(*s))
+	for _, v := range *s {
+		result = append(result, v.String())
+	}
+	return strings.Join(result, ", ")
+}
+
 type Tokenizer struct {
 	ast AST
 	tmp *sb.StringBuilder
@@ -152,7 +162,7 @@ type Tokenizer struct {
 	templateOptions    map[string]string
 	_state             state
 	currentConditional *Conditional
-	stateStack         []state
+	stateStack         stateStack
 
 	lastFedRune rune
 	idx         int
