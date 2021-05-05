@@ -67,3 +67,15 @@ $endif$`
 	_, err := Tokenize(template)
 	require.NoError(t, err)
 }
+
+func TestConditionalUnorderedStructure(t *testing.T) {
+	template := `$if(foobar.truthy)$
+foo
+$else$
+bar
+$elseif(foobar.truthy)$
+baz
+$endif$`
+	_, err := Tokenize(template)
+	require.Error(t, err)
+}

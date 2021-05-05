@@ -413,6 +413,13 @@ func (t *Tokenizer) Feed(chr rune) error {
 			if t.templateName.String() == "if" {
 				t.transition(stateTemplateConditionalThen)
 			} else {
+				// Transitioning to ElseIf...
+				if ok, current := t.currentStack(); !ok || current == stateTemplateConditionalElse {
+					// At this point we either have an elseif out of an if
+					// structure, or we have an elseif after an else. Both are
+					// unacceptable.
+					return t.unexpectedKeyword("elseif")
+				}
 				t.transition(stateTemplateConditionalElseIf)
 			}
 			t.pushStack()
