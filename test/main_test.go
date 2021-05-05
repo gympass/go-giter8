@@ -30,5 +30,5 @@ $endif$`
 	exec := render.NewExecutor(p)
 	r, err := exec.Exec(ast)
 	require.NoError(t, err)
-	assert.Equal(t, "\nOK!\n\n", r)
+	assert.Equal(t, "\nOK!\n", r)
 }

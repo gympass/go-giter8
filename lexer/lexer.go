@@ -520,7 +520,7 @@ func (t *Tokenizer) Finish() (AST, error) {
 
 	t.commitLiteral()
 
-	return t.ast, nil
+	return cleanAST(t.ast), nil
 }
 
 // Tokenize takes all runes from the provided string, feeds an internal
@@ -533,4 +533,31 @@ func Tokenize(data string) (ast AST, err error) {
 		}
 	}
 	return t.Finish()
+}
+
+func cleanAST(ast AST) AST {
+	if ast == nil {
+		return nil
+	}
+	var newAST AST
+	for i, node := range ast {
+		if i > 0 && i+1 < len(ast) && node.Kind() == KindLiteral {
+			if node.(*Literal).String == "\n" &&
+				ast[i-1].Kind() == KindConditional &&
+				ast[i+1].Kind() == KindConditional {
+				continue
+			}
+		}
+
+		if node.Kind() == KindConditional {
+			cond := node.(*Conditional)
+			cond.Then = cleanAST(cond.Then)
+			cond.Else = cleanAST(cond.Else)
+			for i, elseIf := range cond.ElseIf {
+				cond.ElseIf[i] = cleanAST(AST{elseIf})[0].(*Conditional)
+			}
+		}
+		newAST = append(newAST, node)
+	}
+	return newAST
 }
