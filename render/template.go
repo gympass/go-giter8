@@ -5,6 +5,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"unicode/utf8"
 
@@ -112,9 +113,9 @@ func renderAndJoin(exec *Executor, nodes []fs.Node) (string, error) {
 	return filepath.Join(items...), nil
 }
 
-func isVerbatim(source string, patterns []string) bool {
+func isVerbatim(source string, patterns []*regexp.Regexp) bool {
 	for _, p := range patterns {
-		if ok, err := filepath.Match(p, source); err == nil && ok {
+		if p.MatchString(source) {
 			return true
 		}
 	}
@@ -143,11 +144,12 @@ func TemplateDirectory(props props.Pairs, source, destination string) error {
 
 	exec := NewExecutor(props)
 	verb, verbOK := props.Fetch("verbatim")
-	var verbs []string
+	var verbs []*regexp.Regexp
 	for _, v := range strings.Split(verb, " ") {
 		v = strings.TrimSpace(v)
 		if len(v) > 0 {
-			verbs = append(verbs, v)
+			reg := fs.CreateSGlob(v)
+			verbs = append(verbs, reg)
 		}
 	}
 
