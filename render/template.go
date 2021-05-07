@@ -173,6 +173,7 @@ func TemplateDirectory(props props.Pairs, source, destination string) error {
 			if err = copyFile(item.Source, path); err != nil {
 				return err
 			}
+			continue
 		}
 		fileStat, err := os.Stat(item.Source)
 		if err != nil {
