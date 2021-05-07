@@ -5,6 +5,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"strings"
 	"unicode/utf8"
 
 	"github.com/Gympass/go-giter8/fs"
@@ -111,6 +112,15 @@ func renderAndJoin(exec *Executor, nodes []fs.Node) (string, error) {
 	return filepath.Join(items...), nil
 }
 
+func isVerbatim(source string, patterns []string) bool {
+	for _, p := range patterns {
+		if ok, err := filepath.Match(p, source); err == nil && ok {
+			return true
+		}
+	}
+	return false
+}
+
 // TemplateDirectory renders a given source template using props as variables
 // into a given destination. Destination must not exist.
 func TemplateDirectory(props props.Pairs, source, destination string) error {
@@ -132,6 +142,14 @@ func TemplateDirectory(props props.Pairs, source, destination string) error {
 	}
 
 	exec := NewExecutor(props)
+	verb, verbOK := props.Fetch("verbatim")
+	var verbs []string
+	for _, v := range strings.Split(verb, " ") {
+		v = strings.TrimSpace(v)
+		if len(v) > 0 {
+			verbs = append(verbs, v)
+		}
+	}
 
 	for _, item := range items {
 		path, err := renderAndJoin(exec, item.Nodes)
@@ -150,7 +168,7 @@ func TemplateDirectory(props props.Pairs, source, destination string) error {
 			continue
 		}
 
-		if !isTextFile(item.Source) {
+		if (verbOK && isVerbatim(item.Source, verbs)) || !isTextFile(item.Source) {
 			// Just... copy it?
 			if err = copyFile(item.Source, path); err != nil {
 				return err
