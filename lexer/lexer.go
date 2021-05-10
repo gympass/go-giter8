@@ -301,7 +301,12 @@ func (t *Tokenizer) prepareConditional() error {
 		parentNode: t.currentConditional,
 	}
 	if ls == stateTemplateConditionalThen {
-		t.ast = append(t.ast, cond)
+		// Should this be added to a parent conditional, or to the tree itself?
+		if len(t.stateStack) > 1 {
+			t.currentConditional.Then = append(t.currentConditional.Then, cond)
+		} else {
+			t.ast = append(t.ast, cond)
+		}
 	} else if ls == stateTemplateConditionalElseIf {
 		t.currentConditional.ElseIf = append(t.currentConditional.ElseIf, cond)
 	}
