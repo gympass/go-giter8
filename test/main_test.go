@@ -32,3 +32,25 @@ $endif$`
 	require.NoError(t, err)
 	assert.Equal(t, "\nOK!\n", r)
 }
+
+func TestNestedConditionals(t *testing.T) {
+	template := `$if(parent.truthy)$
+Parent OK
+$if(child.truthy)$
+Child OK
+$endif$
+$endif$`
+
+	p := props.FromMap(map[string]string{
+		"parent": "false",
+		"child":  "true",
+	})
+
+	ast, err := lexer.Tokenize(template)
+	require.NoError(t, err)
+
+	exec := render.NewExecutor(p)
+	r, err := exec.Exec(ast)
+	require.NoError(t, err)
+	assert.Equal(t, "", r)
+}
