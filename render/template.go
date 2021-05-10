@@ -14,6 +14,18 @@ import (
 	"github.com/Gympass/go-giter8/props"
 )
 
+// AfterRenderCallback defines a callback function to be called whenever a new
+// file has been rendered and is about to be written to disk. This function can
+// perform any kind of modification to `contents`, and return those
+// modifications, which will then be written to disk.
+// Info contains a os.FileInfo structure representing the source template, while
+// contents contains the rendered template.
+type AfterRenderCallback func(info os.FileInfo, contents string) (string, error)
+
+type Options struct {
+	AfterRenderCallback AfterRenderCallback
+}
+
 func isText(s []byte) bool {
 	const max = 1024 // at least utf8.UTFMax
 	if len(s) > max {
@@ -124,7 +136,16 @@ func isVerbatim(source string, patterns []*regexp.Regexp) bool {
 
 // TemplateDirectory renders a given source template using props as variables
 // into a given destination. Destination must not exist.
+// Calling this function is the same as calling TemplateDirectoryOpts without
+// options.
 func TemplateDirectory(props props.Pairs, source, destination string) error {
+	return TemplateDirectoryOpts(props, source, destination, nil)
+}
+
+// TemplateDirectoryOpts renders a given source template into a given
+// destination using props as variables and an optional Options structure.
+// Destination must not exist.
+func TemplateDirectoryOpts(props props.Pairs, source, destination string, opts *Options) error {
 	items, err := fs.ScanTree(source)
 	if err != nil {
 		return err
@@ -153,8 +174,10 @@ func TemplateDirectory(props props.Pairs, source, destination string) error {
 		}
 	}
 
+	var path string
+
 	for _, item := range items {
-		path, err := renderAndJoin(exec, item.Nodes)
+		path, err = renderAndJoin(exec, item.Nodes)
 		if err != nil {
 			return err
 		}
@@ -194,6 +217,14 @@ func TemplateDirectory(props props.Pairs, source, destination string) error {
 		if err != nil {
 			return fmt.Errorf("error rendering %s: %s", item.Source, err)
 		}
+
+		if opts != nil && opts.AfterRenderCallback != nil {
+			contents, err = (opts.AfterRenderCallback)(fileStat, contents)
+			if err != nil {
+				return err
+			}
+		}
+
 		err = os.WriteFile(path, []byte(contents), fileStat.Mode())
 		if err != nil {
 			return err
