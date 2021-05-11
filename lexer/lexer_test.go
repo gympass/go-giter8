@@ -1,9 +1,9 @@
 package lexer
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -94,4 +94,15 @@ func TestCompositeFormatting(t *testing.T) {
 	fmt, ok := tmp.Options["format"]
 	assert.True(t, ok)
 	assert.Equal(t, "decap", fmt)
+}
+
+func TestDashedVariables(t *testing.T) {
+	template := "$some-variable$"
+	ast, err := Tokenize(template)
+	require.NoError(t, err)
+	require.Equal(t, 1, len(ast))
+	node := ast[0]
+	assert.Equal(t, KindTemplate, node.Kind())
+	tmp := node.(*Template)
+	assert.Equal(t, "some-variable", tmp.Name)
 }

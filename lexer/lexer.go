@@ -139,6 +139,7 @@ const (
 	RPAREN     = rune(')')
 	DOT        = rune('.')
 	UNDERSCORE = rune('_')
+	DASH       = rune('-')
 	TRUTHY     = "truthy"
 )
 
@@ -445,7 +446,7 @@ func (t *Tokenizer) Feed(chr rune) error {
 			t.tmp.Reset()
 			return nil
 		}
-		if !unicode.IsLetter(chr) && !unicode.IsDigit(chr) && chr != UNDERSCORE {
+		if !unicode.IsLetter(chr) && !unicode.IsDigit(chr) && chr != UNDERSCORE && chr != DASH {
 			return t.unexpectedToken(chr)
 		}
 		t.templateName.WriteRune(chr)
