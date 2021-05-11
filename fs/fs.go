@@ -35,7 +35,7 @@ func ScanTree(source string) ([]TreeItem, error) {
 		if err != nil {
 			return err
 		}
-		if path == source {
+		if path == source || strings.EqualFold(filepath.Join(source, "default.properties"), path) {
 			return nil
 		}
 
