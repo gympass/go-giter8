@@ -17,6 +17,7 @@ minimumCoverage=10
 descriptions=Project descriptions
 namespace=foo
 productionCluster=production
+dashed-variable=value
 `
 	allProps, err := ParseProperties(props)
 	require.NoError(t, err)
@@ -28,4 +29,5 @@ productionCluster=production
 	assert.Equal(t, "10", allProps.MustGet("minimumCoverage"))
 	assert.Equal(t, "foo", allProps.MustGet("namespace"))
 	assert.Equal(t, "production", allProps.MustGet("productionCluster"))
+	assert.Equal(t, "value", allProps.MustGet("dashed-variable"))
 }
