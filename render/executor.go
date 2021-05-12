@@ -181,7 +181,7 @@ func (e *Executor) runMethods(t *lexer.Template) (string, error) {
 func (e *Executor) evaluateConditionalExpression(expr, helper string) (bool, error) {
 	v, ok := e.props.FetchPair(expr)
 	if !ok {
-		return false, fmt.Errorf("property `%s' is not defined", expr)
+		return false, nil
 	}
 	if strings.EqualFold(helper, "truthy") {
 		return v.Truthy(), nil
