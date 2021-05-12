@@ -340,6 +340,10 @@ func (t Tokenizer) unsupportedConditionalHelper(name string) error {
 	return UnsupportedConditionalHelperErr{idx: t.idx, line: t.line, helper: name}
 }
 
+func isValidNameChar(chr rune) bool {
+	return unicode.IsLetter(chr) || unicode.IsDigit(chr) || chr == DASH || chr == UNDERSCORE
+}
+
 // Feed feeds a given rune to the parser
 func (t *Tokenizer) Feed(chr rune) error {
 	defer func() {
@@ -446,7 +450,7 @@ func (t *Tokenizer) Feed(chr rune) error {
 			t.tmp.Reset()
 			return nil
 		}
-		if !unicode.IsLetter(chr) && !unicode.IsDigit(chr) && chr != UNDERSCORE && chr != DASH {
+		if !isValidNameChar(chr) {
 			return t.unexpectedToken(chr)
 		}
 		t.templateName.WriteRune(chr)
@@ -473,7 +477,7 @@ func (t *Tokenizer) Feed(chr rune) error {
 			t.transition(stateTemplateConditionalExpressionEnd)
 			return nil
 		}
-		if !unicode.IsLetter(chr) && !unicode.IsDigit(chr) && chr != DOT {
+		if !isValidNameChar(chr) && chr != DOT {
 			return t.unexpectedToken(chr)
 		}
 		t.templateName.WriteRune(chr)
