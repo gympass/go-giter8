@@ -54,3 +54,25 @@ $endif$`
 	require.NoError(t, err)
 	assert.Equal(t, "", r)
 }
+
+func TestAbsentConditionalProperties(t *testing.T) {
+	template := `$if(non-existing.truthy)$
+$non-existing$
+$endif$
+$if(existing.truthy)$
+Yay!
+$endif$`
+
+	p := props.FromMap(map[string]string{
+		"existing": "true",
+	})
+
+	ast, err := lexer.Tokenize(template)
+	require.NoError(t, err)
+
+	exec := render.NewExecutor(p)
+	r, err := exec.Exec(ast)
+	require.NoError(t, err)
+	assert.Equal(t, "\nYay!\n", r)
+
+}
