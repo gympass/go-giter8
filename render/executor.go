@@ -183,8 +183,11 @@ func (e *Executor) evaluateConditionalExpression(expr, helper string) (bool, err
 	if !ok {
 		return false, nil
 	}
-	if strings.EqualFold(helper, "truthy") {
+	switch true {
+	case strings.EqualFold(helper, "truthy"):
 		return v.Truthy(), nil
+	case strings.EqualFold(helper, "present"):
+		return len(strings.TrimSpace(v.V)) != 0, nil
 	}
 	panic("BUG: helper allowed by lexer, but not implemented by renderer")
 }

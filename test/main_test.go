@@ -76,3 +76,25 @@ $endif$`
 	assert.Equal(t, "\nYay!\n", r)
 
 }
+
+func TestPresentConditional(t *testing.T) {
+	template := `$if(non-existing.present)$
+$non-existing$
+$endif$
+$if(existing.present)$
+foobar
+$endif$`
+
+	p := props.FromMap(map[string]string{
+		"existing": "foobar",
+	})
+
+	ast, err := lexer.Tokenize(template)
+	require.NoError(t, err)
+
+	exec := render.NewExecutor(p)
+	r, err := exec.Exec(ast)
+	require.NoError(t, err)
+	assert.Equal(t, "\nfoobar\n", r)
+
+}

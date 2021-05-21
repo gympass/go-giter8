@@ -141,7 +141,13 @@ const (
 	UNDERSCORE = rune('_')
 	DASH       = rune('-')
 	TRUTHY     = "truthy"
+	PRESENT    = "present"
 )
+
+var validComparators = map[string]bool{
+	TRUTHY:  true,
+	PRESENT: true,
+}
 
 func isSpace(r rune) bool {
 	return r == SPACE || r == HTAB
@@ -290,7 +296,7 @@ func (t *Tokenizer) prepareConditional() error {
 		helper = expr[separatorIndex+1:]
 	)
 
-	if !strings.EqualFold(helper, TRUTHY) {
+	if _, ok := validComparators[strings.ToLower(helper)]; !ok {
 		return t.unsupportedConditionalHelper(helper)
 	}
 
