@@ -77,6 +77,17 @@ func (c Conditional) Parent() Node {
 
 type AST []Node
 
+// IsPureLiteral determines whether the AST only contains literals, meaning
+// it contains no templating to be processed
+func (a AST) IsPureLiteral() bool {
+	for _, n := range a {
+		if n.Kind() != KindLiteral {
+			return false
+		}
+	}
+	return true
+}
+
 type state int
 
 const (
