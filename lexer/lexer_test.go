@@ -106,3 +106,10 @@ func TestDashedVariables(t *testing.T) {
 	tmp := node.(*Template)
 	assert.Equal(t, "some-variable", tmp.Name)
 }
+
+func TestAST_IsPureLiteral(t *testing.T) {
+	template := "A pure-literal \\$value"
+	ast, err := Tokenize(template)
+	require.NoError(t, err)
+	assert.True(t, ast.IsPureLiteral())
+}
