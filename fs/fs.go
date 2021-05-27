@@ -26,6 +26,11 @@ func prepareNodeName(rawName string) lexer.AST {
 	return ast
 }
 
+func shouldIgnore(source, path string) bool {
+	return strings.EqualFold(filepath.Join(source, "default.properties"), path) ||
+		strings.EqualFold(filepath.Join(source, "default.descriptions"), path)
+}
+
 // ScanTree takes a source directory and returns a slice of TreeItem
 // ready to be processed by a renderer
 func ScanTree(source string) ([]TreeItem, error) {
@@ -35,7 +40,7 @@ func ScanTree(source string) ([]TreeItem, error) {
 		if err != nil {
 			return err
 		}
-		if path == source || strings.EqualFold(filepath.Join(source, "default.properties"), path) {
+		if path == source || shouldIgnore(source, path) {
 			return nil
 		}
 
