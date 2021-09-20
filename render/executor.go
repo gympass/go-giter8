@@ -37,7 +37,7 @@ func capitalize(val string) string {
 	case 1:
 		return strings.ToUpper(val)
 	default:
-		return strings.ToUpper(val[0:1]) + val[2:]
+		return strings.ToUpper(val[0:1]) + val[1:]
 	}
 }
 func decapitalize(val string) string {
