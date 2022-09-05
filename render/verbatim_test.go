@@ -6,7 +6,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/Gympass/go-giter8/fs"
+	"github.com/gympass/go-giter8/fs"
 )
 
 func TestVerbatim(t *testing.T) {

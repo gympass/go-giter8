@@ -6,7 +6,7 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/Gympass/go-giter8/sb"
+	"github.com/gympass/go-giter8/sb"
 )
 
 type Kind int
