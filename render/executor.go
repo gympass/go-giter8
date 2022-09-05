@@ -8,8 +8,8 @@ import (
 	"time"
 	"unsafe"
 
-	"github.com/Gympass/go-giter8/lexer"
-	"github.com/Gympass/go-giter8/props"
+	"github.com/gympass/go-giter8/lexer"
+	"github.com/gympass/go-giter8/props"
 )
 
 var wordOnlyRegexp = regexp.MustCompile(`[^a-zA-Z0-9_]`)

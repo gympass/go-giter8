@@ -6,9 +6,9 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/Gympass/go-giter8/lexer"
-	"github.com/Gympass/go-giter8/props"
-	"github.com/Gympass/go-giter8/render"
+	"github.com/gympass/go-giter8/lexer"
+	"github.com/gympass/go-giter8/props"
+	"github.com/gympass/go-giter8/render"
 )
 
 func TestRendering(t *testing.T) {

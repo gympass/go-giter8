@@ -9,9 +9,9 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"github.com/Gympass/go-giter8/fs"
-	"github.com/Gympass/go-giter8/lexer"
-	"github.com/Gympass/go-giter8/props"
+	"github.com/gympass/go-giter8/fs"
+	"github.com/gympass/go-giter8/lexer"
+	"github.com/gympass/go-giter8/props"
 )
 
 // AfterRenderCallback defines a callback function to be called whenever a new

@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/Gympass/go-giter8/lexer"
+	"github.com/gympass/go-giter8/lexer"
 )
 
 type Node struct {
